@@ -11,16 +11,12 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Image, Table, Table
 from reportlab.lib.styles import getSampleStyleSheet
 import time
 import uuid
-
-# Importe a função do arquivo drive_utils.py (crie esse arquivo se ainda não existir)
-from drive_utils import list_files_from_drive, upload_to_drive
+from werkzeug.utils import secure_filename
+from drive_utils import list_files_from_drive, get_drive_credentials  # Importe a função get_drive_credentials
 
 app = Flask(__name__)
 
-# Configurações para o Google Drive
-SERVICE_ACCOUNT_FILE = 'credentials/credentials.json'  # <----- VERIFIQUE SE O CAMINHO E O NOME ESTÃO CORRETOS
-SCOPES = ['https://www.googleapis.com/auth/drive']
-PARENT_FOLDER_ID = '1900p8OQqh_imzW8YDxA_gwHy5q81urZz'  # <----- COLOQUE O ID DA SUA PASTA AQUI
+app.secret_key = os.environ.get('SECRET_KEY', '93096627')  # Defina uma chave secreta forte em produção!
 
 # Configurações do app
 UPLOAD_FOLDER = 'static/uploads'
@@ -165,14 +161,20 @@ def editar_qualificado():
 
 @app.route('/consulta', methods=['GET', 'POST'])
 def consulta():
-    filter_text = ""
     if request.method == 'POST':
-        filter_text = request.form.get('filter_text', '')
+        filter_text = request.form['filter_text']
+    else:
+        filter_text = ''
 
-    # Chame a função importada de drive_utils.py
-    files = list_files_from_drive(filter_text)
+    try:
+        # Use a função get_drive_credentials() para obter as credenciais
+        files = list_files_from_drive(filter_text)
+        error_message = None
+    except ValueError as e:
+        error_message = str(e)  # Capture a mensagem de erro
+        files = []
 
-    return render_template('consulta.html', files=files, filter_text=filter_text)
+    return render_template('consulta.html', files=files, filter_text=filter_text, error_message=error_message)
 
 @app.route('/visualizar/<file_id>')
 def visualizar(file_id):

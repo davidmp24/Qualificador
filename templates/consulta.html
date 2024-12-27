@@ -66,6 +66,7 @@
         <i class="fas fa-arrow-left"></i>
     </button>
 </div>
+
         </div>
     </div>
     <script src="https://kit.fontawesome.com/a076d05399.js"></script>
@@ -85,6 +86,15 @@
     document.getElementById('go-home').addEventListener('click', function() {
         window.location.href = '/';  // Redireciona para a página inicial
     });
+    {% if error_message %}
+    <div class="alert alert-danger">{{ error_message }}</div>
+{% endif %}
+
+<ul>
+{% for file in files %}
+    <li>{{ file.name }} (ID: {{ file.id }})</li>
+{% endfor %}
+</ul>
 </script>
 </body>
 

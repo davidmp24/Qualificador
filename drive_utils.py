@@ -7,6 +7,18 @@ SERVICE_ACCOUNT_FILE = 'credentials/credentials.json'  # Ajuste o caminho se nec
 SCOPES = ['https://www.googleapis.com/auth/drive']
 PARENT_FOLDER_ID = '1900p8OQqh_imzW8YDxA_gwHy5q81urZz'
 
+def get_drive_credentials():
+    """Obtém as credenciais do Google Drive a partir da variável de ambiente."""
+    credentials_json_str = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
+
+    if credentials_json_str:
+        # Carrega as credenciais a partir da string JSON
+        credentials_info = json.loads(credentials_json_str)
+        creds = service_account.Credentials.from_service_account_info(credentials_info)
+        return creds
+    else:
+        raise ValueError("Variável de ambiente GOOGLE_APPLICATION_CREDENTIALS não definida!")
+
 def upload_to_drive(file_path, file_name):
     """Faz upload de um arquivo para o Google Drive."""
     creds = None
@@ -35,7 +47,7 @@ def upload_to_drive(file_path, file_name):
     except Exception as e:
         print(f"Erro ao fazer upload do arquivo para o Google Drive: {e}")
         return None
-
+    
 def list_files_from_drive(filter_text):
     """Lista os arquivos do Google Drive que correspondem ao filtro."""
     creds = service_account.Credentials.from_service_account_file(
