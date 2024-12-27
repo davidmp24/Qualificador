@@ -212,5 +212,5 @@ def informacao():
     return render_template('informacao.html')
 
 if __name__ == "__main__":
-     port = int(os.environ.get('PORT', 5000)) # Usa a porta 5000 como padrão se PORT não estiver definida
+    port = int(os.environ.get('PORT', 5000)) # Usa a porta 5000 como padrão se PORT não estiver definida
     app.run(host='0.0.0.0', port=port)
