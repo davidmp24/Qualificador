@@ -1,0 +1,65 @@
+body {
+    font-family: 'Arial', sans-serif; /* Ou uma fonte semelhante */
+    background-color: #f8f9fa; /* Cor de fundo da imagem */
+}
+
+.cabecalho {
+    text-align: center;
+    margin-bottom: 20px;
+    position: relative; /* Para posicionar as logos */
+}
+
+.cabecalho p {
+    font-weight: bold;
+    margin: 2px 0; /* Espaçamento entre as linhas do cabeçalho */
+    font-size: 10px;
+}
+
+.logo-left {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px; /* Ajuste o tamanho conforme necessário */
+}
+
+.logo-right {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px; /* Ajuste o tamanho conforme necessário */
+}
+
+.foto-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.foto {
+    max-width: 200px; /* Ajuste conforme necessário */
+    border: 1px solid #ddd; /* Borda sutil, ajuste conforme necessário */
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Sombra sutil, ajuste conforme necessário */
+}
+
+.info {
+    padding: 15px;
+    background-color: white;
+}
+
+.info p {
+    margin-bottom: 10px; /* Ajuste o espaçamento conforme necessário */
+    font-size: 14px; /* Ajuste conforme necessário */
+}
+
+.nome {
+    font-weight: bold; /* Nome em negrito */
+}
+
+.natureza {
+    font-weight: bold; /* Natureza em negrito */
+    font-style: italic; /* Natureza em itálico */
+}
+.espaco-direita {
+    margin-right: 20px; /* Ajuste o valor conforme necessário */
+}

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tela Inicial</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/inicial.css') }}">
+    <style>
+        .logo-container {
+            max-width: 300px; /* Defina a largura máxima desejada para a imagem */
+            margin: 0 auto; /* Centraliza o container da imagem */
+        }
+
+        .logo-container img {
+            width: 100%; /* Faz a imagem ocupar 100% da largura do container */
+            height: auto; /* Mantém a proporção da imagem */
+        }
+    </style>
+</head>
+<body class="bg-light d-flex justify-content-center align-items-center vh-100">
+    <div class="container text-center">
+        <div class="card shadow-lg p-4">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='images/logoapp.png') }}" alt="Logo do App" class="img-fluid">
+            </div>
+            <ul class="list-unstyled">
+                <li class="mb-3">
+                    <a href="/qualificacao" class="btn btn-primary btn-lg w-100">Qualificação</a>
+                </li>
+                <li class="mb-3">
+                    <a href="/consulta" class="btn btn-primary btn-lg w-100">Consulta</a>
+                </li>
+                <li>
+                    <a href="/informacao" class="btn btn-primary btn-lg w-100">Informação</a>
+                </li>
+            </ul>
+          </div>
+          <footer class="footer mt-auto py-3 bg-light">
+            <div class="container text-center">
+                <span class="text-muted">Copyright © 2025</span>
+            </div>
+        </footer>
+    </div>
+
+</body>
+</html>

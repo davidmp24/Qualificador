@@ -1,0 +1,78 @@
+/* Estilo para a página */
+body {
+    position: relative;
+    font-family: Arial, sans-serif;
+}
+
+/* Container dos botões flutuantes */
+.floating-buttons {
+    position: fixed;
+    top: 20px;
+    right: 20px;  /* Mudei de left: 20px para right: 20px para mover para a direita */
+    z-index: 1000;
+}
+
+/* Estilo comum para todos os botões flutuantes */
+.btn-floating {
+    width: 50px;
+    height: 50px;
+    background-color: #007bff;  /* Cor de fundo azul */
+    border-radius: 50%;  /* Torna o botão redondo */
+    color: white;  /* Cor do ícone e texto */
+    font-size: 24px;  /* Tamanho do ícone */
+    border: none;
+    margin: 10px 0;
+    display: block;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);  /* Sombra para o botão */
+}
+
+/* Estilo do ícone dentro do botão */
+.btn-floating i {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;  /* Cor da flecha (ícone) dentro do botão */
+}
+
+/* Botão para rolar para baixo */
+#scroll-down {
+    margin-bottom: 10px;
+}
+
+/* Botão para rolar para cima */
+#scroll-up {
+    margin-bottom: 10px;
+}
+
+/* Botão para voltar para a página inicial */
+#go-home {
+    margin-top: 10px;
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+    .floating-buttons {
+        top: 15px;
+        right: 15px;  /* Ajuste no lado direito também */
+    }
+
+    .btn-floating {
+        width: 45px;
+        height: 45px;
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .floating-buttons {
+        top: 10px;
+        right: 10px;  /* Ajuste no lado direito para telas muito pequenas */
+    }
+
+    .btn-floating {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+}
