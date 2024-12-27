@@ -2,10 +2,7 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 import os
-
-SERVICE_ACCOUNT_FILE = 'credentials/credentials.json'  # Ajuste o caminho se necessário
-SCOPES = ['https://www.googleapis.com/auth/drive']
-PARENT_FOLDER_ID = '1900p8OQqh_imzW8YDxA_gwHy5q81urZz'
+import json
 
 def get_drive_credentials():
     """Obtém as credenciais do Google Drive a partir da variável de ambiente."""
@@ -47,17 +44,15 @@ def upload_to_drive(file_path, file_name):
     except Exception as e:
         print(f"Erro ao fazer upload do arquivo para o Google Drive: {e}")
         return None
-    
+
 def list_files_from_drive(filter_text):
-    """Lista os arquivos do Google Drive que correspondem ao filtro."""
-    creds = service_account.Credentials.from_service_account_file(
-        SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+    """Lista os arquivos do Google Drive com base em um filtro."""
+    creds = get_drive_credentials() # Use a função para obter as credenciais
     service = build('drive', 'v3', credentials=creds)
 
-    query = f"'{PARENT_FOLDER_ID}' in parents"
-    if filter_text:
-        query += f" and name contains '{filter_text}'"
-
+    # Adapte a consulta de acordo com suas necessidades
+    query = f"name contains '{filter_text}' and mimeType != 'application/vnd.google-apps.folder'"
     results = service.files().list(q=query, fields="nextPageToken, files(id, name)").execute()
     items = results.get('files', [])
+
     return items
