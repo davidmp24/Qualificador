@@ -6,8 +6,6 @@
     <title>Resultado</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/resultado.css') }}">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
 </head>
 <body class="bg-light">
     <div class="container py-5" id="capture-area">
@@ -34,121 +32,44 @@
             </div>
         </div>
     </div>
-    <div class="text-center mt-4" id="botoes-container">
-        <button id="save-pdf" class="btn btn-primary">Salvar como PDF</button>
+    <div class="container mt-4">
+        <a href="/download/{{ nome }}.pdf" class="btn btn-primary">Baixar PDF</a>
         <button id="share-pdf" class="btn btn-primary">Compartilhar</button>
-        <!-- Botão de Edição -->
         <a href="/editar_qualificado?batalhao={{ batalhao }}&cia={{ cia }}&pelgp={{ pelgp }}&nome={{ nome }}&vulgo={{ vulgo }}&rgcpf={{ rgcpf }}&ssp={{ ssp }}&nascimento={{ nascimento }}&natureza={{ natureza }}&datafato={{ datafato }}&bopme={{ bopme }}&cidade={{ cidade }}&endereco={{ endereco }}&equipe={{ equipe }}&foto_url={{ foto_url }}" class="btn btn-primary">Editar</a>
-        <a href="/" class="btn btn-primary">Início</a>  <!-- Botão Início -->
+        <a href="/" class="btn btn-primary">Início</a>
     </div>
     <footer class="footer mt-auto py-3 bg-light">
         <div class="container text-center">
-            <span class="text-muted">Copyright © 2025</span>
+            <span class="text-muted">Copyright © <a href="https://x.com/DavidMPrado">2025</a></span>
         </div>
     </footer>
-        <script>
-        document.getElementById('save-pdf').addEventListener('click', async function() {
-            // Oculta os botões
-            document.getElementById('botoes-container').style.display = 'none';
-
-            const { jsPDF } = window.jspdf;
-            const captureArea = document.getElementById('capture-area');
-            const nome = document.querySelector('.nome').innerText; // Captura o nome do elemento HTML
-
-            const canvas = await html2canvas(captureArea, {
-                backgroundColor: null,
-                scale: 2
-            });
-            const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF();
-            const imgWidth = 190;
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-            pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
-
-            // Obter o PDF como Blob
-            const pdfBlob = pdf.output('blob');
-
-            // Enviar o Blob e o nome via AJAX para o servidor
-            const formData = new FormData();
-            formData.append('pdf', pdfBlob, `${nome}.pdf`);
-            formData.append('nome', nome); // Adiciona o nome ao FormData
-
-            fetch('/upload-pdf', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (response.ok) {
-                    // Inicia o download do PDF
-                    response.blob().then(blob => {
-                        const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = `${nome}.pdf`;
-                        document.body.appendChild(a);
-                        a.click();
-                        a.remove();
-                        
-                     // Mensagem de sucesso do download
-                alert('Download do PDF iniciado com sucesso!');
-            });
-            return response.text();
-        } else {
-            throw new Error('Erro ao salvar/enviar o PDF.');
-                }
-            })
-            .then(message => {
-                alert(message); // Exibe a mensagem de sucesso do servidor
-            })
-            .catch(error => {
-                console.error('Erro ao enviar o PDF:', error);
-                alert(error.message);
-            })
-            .finally(() => {
-                // Mostra os botões novamente
-                document.getElementById('botoes-container').style.display = 'block';
-            });
-        });
-
+    <script>
         document.getElementById('share-pdf').addEventListener('click', async function() {
-            // Oculta os botões
-            document.getElementById('botoes-container').style.display = 'none';
-            
-            const { jsPDF } = window.jspdf;
-            const captureArea = document.querySelector('.container.py-5');
-            const nome = "{{ nome }}" || "resultado";
+            const nome = "{{ nome }}";
+            const pdfFilename = `${nome}.pdf`;
 
-            const canvas = await html2canvas(captureArea, {
-                backgroundColor: null,
-                scale: 2
-            });
-            const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF();
-            const imgWidth = 190;
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-            pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
-            const pdfBlob = pdf.output('blob');
-
-            if (navigator.share) {
-                const file = new File([pdfBlob], `${nome}.pdf`, { type: 'application/pdf' });
-
-                try {
-                    await navigator.share({
-                        title: 'Compartilhar PDF',
-                        text: 'Confira este arquivo PDF.',
-                        files: [file]
-                    });
-                } catch (err) {
-                    alert('Erro ao compartilhar: ' + err.message);
+            try {
+                const response = await fetch(`/download/${pdfFilename}`);
+                if (!response.ok) {
+                    throw new Error('Erro ao baixar o PDF do servidor.');
                 }
-            } else {
-                alert('O compartilhamento não é compatível com este dispositivo.');
-            }
 
-            // Mostra os botões novamente
-            document.getElementById('botoes-container').style.display = 'block';
+                const pdfBlob = await response.blob();
+                const file = new File([pdfBlob], pdfFilename, { type: 'application/pdf' });
+
+                if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                    await navigator.share({
+                        files: [file],
+                        title: 'Compartilhar Qualificação',
+                        text: 'Veja a qualificação de ' + nome,
+                    });
+                } else {
+                    alert('Compartilhamento não suportado neste navegador ou dispositivo.');
+                }
+            } catch (error) {
+                console.error('Erro ao compartilhar:', error);
+                alert('Erro ao compartilhar: ' + error.message);
+            }
         });
     </script>
 </body>

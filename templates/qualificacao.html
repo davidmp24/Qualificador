@@ -106,7 +106,8 @@
                 </div>
                 <div class="form-group">
                     <label for="foto">Foto:</label>
-                    <input type="file" id="foto" name="foto" class="form-control-file" accept="image/*">
+                    <input type="file" id="foto" name="foto" class="form-control-file" accept="image/*" capture="environment">
+                    <img id="preview" src="#" alt="Prévia da Foto" style="display: none; max-width: 200px; margin-top: 10px;">
                 </div>
                 <button type="submit" class="btn btn-primary btn-block">Cadastrar</button>
                 <a href="/" class="btn btn-secondary btn-block">Cancelar</a>
@@ -114,9 +115,28 @@
         </div>
         <footer class="footer mt-auto py-3 bg-light">
             <div class="container text-center">
-                <span class="text-muted">Copyright © 2025</span>
+                <span class="text-muted">Copyright © <a href="https://x.com/DavidMPrado">2025</a></span>
             </div>
         </footer>
     </div>
+    <script>
+        const fileInput = document.getElementById('foto');
+        const previewImage = document.getElementById('preview');
+
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    previewImage.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            } else {
+                previewImage.style.display = 'none';
+                previewImage.src = '#';
+            }
+        });
+    </script>
 </body>
 </html>
