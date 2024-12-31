@@ -33,74 +33,75 @@
             </div>
         </div>
     </div>
-    <div class="container mt-4" id="botoes-container">
-        <button id="save-image" class="btn btn-primary">Salvar Imagem</button>
-        <button id="share-pdf" class="btn btn-primary">Compartilhar</button>
-        <a href="/editar_qualificado?batalhao={{ batalhao }}&cia={{ cia }}&pelgp={{ pelgp }}&nome={{ nome }}&vulgo={{ vulgo }}&rgcpf={{ rgcpf }}&ssp={{ ssp }}&nascimento={{ nascimento }}&natureza={{ natureza }}&datafato={{ datafato }}&bopme={{ bopme }}&cidade={{ cidade }}&endereco={{ endereco }}&equipe={{ equipe }}&foto_url={{ foto_url }}" class="btn btn-primary">Editar</a>
-        <a href="/" class="btn btn-primary">Início</a>
+</div>
+<div class="container mt-4" id="botoes-container">
+    <button id="save-image" class="btn btn-primary">Salvar Imagem</button>
+    <button id="share-image" class="btn btn-primary">Compartilhar</button>
+    <a href="/editar_qualificado?batalhao={{ batalhao }}&cia={{ cia }}&pelgp={{ pelgp }}&nome={{ nome }}&vulgo={{ vulgo }}&rgcpf={{ rgcpf }}&ssp={{ ssp }}&nascimento={{ nascimento }}&natureza={{ natureza }}&datafato={{ datafato }}&bopme={{ bopme }}&cidade={{ cidade }}&endereco={{ endereco }}&equipe={{ equipe }}&foto_url={{ foto_url }}" class="btn btn-primary">Editar</a>
+    <a href="/" class="btn btn-primary">Início</a>
+</div>
+<footer class="footer mt-auto py-3 bg-light">
+    <div class="container text-center">
+        <span class="text-muted">Copyright © 2025 <a href="/">Qualificador</a></span>
     </div>
-    <footer class="footer mt-auto py-3 bg-light">
-        <div class="container text-center">
-            <span class="text-muted">Copyright © 2025 <a href="/">Qualificador</a></span>
-        </div>
-    </footer>
-    <script>
-        document.getElementById('save-image').addEventListener('click', async function() {
-            // Oculta os botões
-            document.getElementById('botoes-container').style.display = 'none';
+</footer>
+<script>
+    document.getElementById('save-image').addEventListener('click', async function() {
+        // Oculta os botões
+        document.getElementById('botoes-container').style.display = 'none';
 
-            const captureArea = document.getElementById('capture-area');
-            const nome = document.querySelector('.nome').innerText;
+        const captureArea = document.getElementById('capture-area');
+        const nome = document.querySelector('.nome').innerText;
 
+        const canvas = await html2canvas(captureArea, {
+            backgroundColor: null,
+            scale: 2 // Aumenta a resolução da imagem
+        });
+
+        // Cria um link para download da imagem
+        const link = document.createElement('a');
+        link.download = `${nome}.jpg`;
+        link.href = canvas.toDataURL('image/jpeg');
+        link.click();
+
+        // Mostra os botões novamente
+        document.getElementById('botoes-container').style.display = 'block';
+    });
+
+    document.getElementById('share-image').addEventListener('click', async function() {
+        // Oculta os botões
+        document.getElementById('botoes-container').style.display = 'none';
+
+        const captureArea = document.getElementById('capture-area');
+        const nome = document.querySelector('.nome').innerText;
+
+        try {
             const canvas = await html2canvas(captureArea, {
                 backgroundColor: null,
-                scale: 2 // Aumenta a resolução da imagem
+                scale: 2
             });
 
-            // Cria um link para download da imagem
-            const link = document.createElement('a');
-            link.download = `${nome}.jpg`;
-            link.href = canvas.toDataURL('image/jpeg');
-            link.click();
+            canvas.toBlob(async function(blob) {
+                const file = new File([blob], `${nome}.jpg`, { type: 'image/jpeg' });
 
+                if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                    await navigator.share({
+                        files: [file],
+                        title: 'Compartilhar Qualificação',
+                        text: 'Veja a qualificação de ' + nome,
+                    });
+                } else {
+                    alert('Compartilhamento não suportado neste navegador ou dispositivo.');
+                }
+            }, 'image/jpeg');
+        } catch (error) {
+            console.error('Erro ao compartilhar:', error);
+            alert('Erro ao compartilhar: ' + error.message);
+        } finally {
             // Mostra os botões novamente
             document.getElementById('botoes-container').style.display = 'block';
-        });
-
-        document.getElementById('share-image').addEventListener('click', async function() {
-            // Oculta os botões
-            document.getElementById('botoes-container').style.display = 'none';
-
-            const captureArea = document.getElementById('capture-area');
-            const nome = document.querySelector('.nome').innerText;
-
-            try {
-                const canvas = await html2canvas(captureArea, {
-                    backgroundColor: null,
-                    scale: 2
-                });
-
-                canvas.toBlob(async function(blob) {
-                    const file = new File([blob], `${nome}.jpg`, { type: 'image/jpeg' });
-
-                    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-                        await navigator.share({
-                            files: [file],
-                            title: 'Compartilhar Qualificação',
-                            text: 'Veja a qualificação de ' + nome,
-                        });
-                    } else {
-                        alert('Compartilhamento não suportado neste navegador ou dispositivo.');
-                    }
-                }, 'image/jpeg');
-            } catch (error) {
-                console.error('Erro ao compartilhar:', error);
-                alert('Erro ao compartilhar: ' + error.message);
-            } finally {
-                // Mostra os botões novamente
-                document.getElementById('botoes-container').style.display = 'block';
-            }
-        });
-    </script>
+        }
+    });
+</script>
 </body>
 </html>
