@@ -10,11 +10,32 @@
 </head>
 <body class="bg-light">
     <div class="container py-5" id="capture-area">
-        <!-- Conteúdo da página -->
+        <div class="card p-4 shadow-lg">
+            <div class="cabecalho">
+                <img src="{{ url_for('static', filename='images/logo01.png') }}" alt="Logo Esquerda" class="logo-left">
+                <img src="{{ url_for('static', filename='images/logo02.png') }}" alt="Logo Direita" class="logo-right">
+                <p>SECRETARIA DE ESTADO DOS NEGÓCIOS DA SEGURANÇA PÚBLICA</p>
+                <p>POLÍCIA MILITAR DO ESTADO DE SÃO PAULO</p>
+                <p><strong class="batalhao" class="cia" class="pelgp">{{ batalhao }} - {{ cia }}CIA - {{pelgp}} </strong></p>
+            </div>
+            <div class="foto-container">
+                <img src="{{ foto_url }}" alt="Foto Selecionada" class="img-fluid foto">
+            </div>
+            <div class="info">
+                <p><strong>NOME:</strong> <strong class="nome">{{ nome }}</strong></p>
+                <p><strong>VULGO:</strong> {{ vulgo }}</p>
+                <p><strong>RG:</strong> <span class="espaco-direita">{{ rgcpf }}</span> <strong>SSP:</strong> <span class="espaco-direita">{{ ssp }}</span> <strong>DATA NASC.:</strong> {{ nascimento }}</p>
+                <p><strong>NATUREZA:</strong>  <em class="natureza">{{ natureza }}</em></p>
+                <p><strong>DATA FATO:</strong>  <span class="espaco-direita">{{ datafato }} </span> <strong>BOPM:</strong> <span class="espaco-direita"> {{ bopme }}</span></p>
+                <p><strong>CIDADE:</strong> {{ cidade }}</p>
+                <p><strong>ENDEREÇO:</strong> {{ endereco }}</p>
+                <p><strong>EQUIPE POLICIAL: </strong> {{ equipe }} </p>
+            </div>
+        </div>
     </div>
     <div class="container mt-4" id="botoes-container">
         <button id="save-image" class="btn btn-primary">Salvar Imagem</button>
-        <button id="share-image" class="btn btn-primary">Compartilhar</button>
+        <button id="share-pdf" class="btn btn-primary">Compartilhar</button>
         <a href="/editar_qualificado?batalhao={{ batalhao }}&cia={{ cia }}&pelgp={{ pelgp }}&nome={{ nome }}&vulgo={{ vulgo }}&rgcpf={{ rgcpf }}&ssp={{ ssp }}&nascimento={{ nascimento }}&natureza={{ natureza }}&datafato={{ datafato }}&bopme={{ bopme }}&cidade={{ cidade }}&endereco={{ endereco }}&equipe={{ equipe }}&foto_url={{ foto_url }}" class="btn btn-primary">Editar</a>
         <a href="/" class="btn btn-primary">Início</a>
     </div>
