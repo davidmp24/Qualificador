@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/resultado.css') }}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
 </head>
 <body class="bg-light">
     <div class="container py-5" id="capture-area">
@@ -35,7 +34,7 @@
         </div>
     </div>
     <div class="container mt-4" id="botoes-container">
-        <a id="download-link" href="/download/{{ nome }}.pdf" class="btn btn-primary">Baixar PDF</a>
+        <button id="save-image" class="btn btn-primary">Salvar Imagem</button>
         <button id="share-pdf" class="btn btn-primary">Compartilhar</button>
         <a href="/editar_qualificado?batalhao={{ batalhao }}&cia={{ cia }}&pelgp={{ pelgp }}&nome={{ nome }}&vulgo={{ vulgo }}&rgcpf={{ rgcpf }}&ssp={{ ssp }}&nascimento={{ nascimento }}&natureza={{ natureza }}&datafato={{ datafato }}&bopme={{ bopme }}&cidade={{ cidade }}&endereco={{ endereco }}&equipe={{ equipe }}&foto_url={{ foto_url }}" class="btn btn-primary">Editar</a>
         <a href="/" class="btn btn-primary">Início</a>
@@ -46,33 +45,26 @@
         </div>
     </footer>
     <script>
-       document.getElementById('download-link').addEventListener('click', async function(event) {
-            event.preventDefault(); // Previne o comportamento padrão do link
-
+        document.getElementById('save-image').addEventListener('click', async function() {
             // Oculta os botões
-            const botoesContainer = document.getElementById('botoes-container');
-            botoesContainer.style.display = 'none';
+            document.getElementById('botoes-container').style.display = 'none';
 
-            const { jsPDF } = window.jspdf;
             const captureArea = document.getElementById('capture-area');
             const nome = document.querySelector('.nome').innerText;
 
             const canvas = await html2canvas(captureArea, {
                 backgroundColor: null,
-                scale: 2
+                scale: 2 // Aumenta a resolução da imagem
             });
-            const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF();
-            const imgWidth = 190;
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-            pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
-
-            // Salva o PDF
-            pdf.save(`${nome}.pdf`);
+            // Cria um link para download da imagem
+            const link = document.createElement('a');
+            link.download = `${nome}.jpg`;
+            link.href = canvas.toDataURL('image/jpeg');
+            link.click();
 
             // Mostra os botões novamente
-            botoesContainer.style.display = 'block';
+            document.getElementById('botoes-container').style.display = 'block';
         });
 
         document.getElementById('share-pdf').addEventListener('click', async function() {
