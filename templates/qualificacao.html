@@ -13,26 +13,6 @@
             <h1 class="mb-4 text-center">Cadastro de Qualificação</h1>
             <form action="/resultado" method="POST" enctype="multipart/form-data">
                 <div class="row">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="batalhao">Batalhão:</label>
-                            <input type="text" id="batalhao" name="batalhao" class="form-control" value="24º">
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="cia">CIA:</label>
-                            <input type="text" id="cia" name="cia" class="form-control" value="1ª">
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="pelgp">Pel / GP:</label>
-                            <input type="text" id="pelgp" name="pelgp" class="form-control" value="3º GP">
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="nome">Nome:</label>
@@ -101,13 +81,8 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="equipe">Equipe Policial:</label>
-                    <input type="text" id="equipe" name="equipe" class="form-control">
-                </div>
-                <div class="form-group">
                     <label for="foto">Foto:</label>
-                    <input type="file" id="foto" name="foto" class="form-control-file" accept="image/*" capture="environment">
-                    <img id="preview" src="#" alt="Prévia da Foto" style="display: none; max-width: 200px; margin-top: 10px;">
+                    <input type="file" id="foto" name="foto" class="form-control-file" accept="image/*">
                 </div>
                 <button type="submit" class="btn btn-primary btn-block">Cadastrar</button>
                 <a href="/" class="btn btn-secondary btn-block">Cancelar</a>
@@ -119,24 +94,5 @@
             </div>
         </footer>
     </div>
-    <script>
-        const fileInput = document.getElementById('foto');
-        const previewImage = document.getElementById('preview');
-
-        fileInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    previewImage.src = e.target.result;
-                    previewImage.style.display = 'block';
-                }
-                reader.readAsDataURL(file);
-            } else {
-                previewImage.style.display = 'none';
-                previewImage.src = '#';
-            }
-        });
-    </script>
 </body>
 </html>

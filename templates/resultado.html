@@ -7,16 +7,13 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/resultado.css') }}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
 </head>
 <body class="bg-light">
     <div class="container py-5" id="capture-area">
         <div class="card p-4 shadow-lg">
             <div class="cabecalho">
-                <img src="{{ url_for('static', filename='images/logo01.png') }}" alt="Logo Esquerda" class="logo-left">
-                <img src="{{ url_for('static', filename='images/logo02.png') }}" alt="Logo Direita" class="logo-right">
-                <p>SECRETARIA DE ESTADO DOS NEGÓCIOS DA SEGURANÇA PÚBLICA</p>
-                <p>POLÍCIA MILITAR DO ESTADO DE SÃO PAULO</p>
-                <p><strong class="batalhao" class="cia" class="pelgp">{{ batalhao }} - {{ cia }}CIA - {{pelgp}} </strong></p>
+                <p>QUALIFICAÇÃO</p>
             </div>
             <div class="foto-container">
                 <img src="{{ foto_url }}" alt="Foto Selecionada" class="img-fluid foto">
@@ -29,79 +26,125 @@
                 <p><strong>DATA FATO:</strong>  <span class="espaco-direita">{{ datafato }} </span> <strong>BOPM:</strong> <span class="espaco-direita"> {{ bopme }}</span></p>
                 <p><strong>CIDADE:</strong> {{ cidade }}</p>
                 <p><strong>ENDEREÇO:</strong> {{ endereco }}</p>
-                <p><strong>EQUIPE POLICIAL: </strong> {{ equipe }} </p>
-            </div>
+             </div>
         </div>
     </div>
-</div>
-<div class="container mt-4" id="botoes-container">
-    <button id="save-image" class="btn btn-primary">Salvar Imagem</button>
-    <button id="share-image" class="btn btn-primary">Compartilhar</button>
-    <a href="/editar_qualificado?batalhao={{ batalhao }}&cia={{ cia }}&pelgp={{ pelgp }}&nome={{ nome }}&vulgo={{ vulgo }}&rgcpf={{ rgcpf }}&ssp={{ ssp }}&nascimento={{ nascimento }}&natureza={{ natureza }}&datafato={{ datafato }}&bopme={{ bopme }}&cidade={{ cidade }}&endereco={{ endereco }}&equipe={{ equipe }}&foto_url={{ foto_url }}" class="btn btn-primary">Editar</a>
-    <a href="/" class="btn btn-primary">Início</a>
-</div>
-<footer class="footer mt-auto py-3 bg-light">
-    <div class="container text-center">
-        <span class="text-muted">Copyright © 2025 <a href="/">Qualificador</a></span>
+    <div class="text-center mt-4" id="botoes-container">
+        <button id="save-pdf" class="btn btn-primary">Salvar como PDF</button>
+        <button id="share-pdf" class="btn btn-primary">Compartilhar</button>
+        <!-- Botão de Edição -->
+        <a href="/editar_qualificado?batalhao=nome={{ nome }}&vulgo={{ vulgo }}&rgcpf={{ rgcpf }}&ssp={{ ssp }}&nascimento={{ nascimento }}&natureza={{ natureza }}&datafato={{ datafato }}&bopme={{ bopme }}&cidade={{ cidade }}&endereco={{ endereco }}&foto_url={{ foto_url }}" class="btn btn-primary">Editar</a>
+        <a href="/" class="btn btn-primary">Início</a>  <!-- Botão Início -->
     </div>
-</footer>
-<script>
-    document.getElementById('save-image').addEventListener('click', async function() {
-        // Oculta os botões
-        document.getElementById('botoes-container').style.display = 'none';
+    <footer class="footer mt-auto py-3 bg-light">
+        <div class="container text-center">
+            <span class="text-muted">Copyright © <a href="https://x.com/DavidMPrado">2025</a></span>
+        </div>
+    </footer>
+        <script>
+        document.getElementById('save-pdf').addEventListener('click', async function() {
+            // Oculta os botões
+            document.getElementById('botoes-container').style.display = 'none';
 
-        const captureArea = document.getElementById('capture-area');
-        const nome = document.querySelector('.nome').innerText;
+            const { jsPDF } = window.jspdf;
+            const captureArea = document.getElementById('capture-area');
+            const nome = document.querySelector('.nome').innerText; // Captura o nome do elemento HTML
 
-        const canvas = await html2canvas(captureArea, {
-            backgroundColor: null,
-            scale: 2 // Aumenta a resolução da imagem
-        });
-
-        // Cria um link para download da imagem
-        const link = document.createElement('a');
-        link.download = `${nome}.jpg`;
-        link.href = canvas.toDataURL('image/jpeg');
-        link.click();
-
-        // Mostra os botões novamente
-        document.getElementById('botoes-container').style.display = 'block';
-    });
-
-    document.getElementById('share-image').addEventListener('click', async function() {
-        // Oculta os botões
-        document.getElementById('botoes-container').style.display = 'none';
-
-        const captureArea = document.getElementById('capture-area');
-        const nome = document.querySelector('.nome').innerText;
-
-        try {
             const canvas = await html2canvas(captureArea, {
                 backgroundColor: null,
                 scale: 2
             });
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF();
+            const imgWidth = 190;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-            canvas.toBlob(async function(blob) {
-                const file = new File([blob], `${nome}.jpg`, { type: 'image/jpeg' });
+            pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
 
-                if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-                    await navigator.share({
-                        files: [file],
-                        title: 'Compartilhar Qualificação',
-                        text: 'Veja a qualificação de ' + nome,
-                    });
-                } else {
-                    alert('Compartilhamento não suportado neste navegador ou dispositivo.');
+            // Obter o PDF como Blob
+            const pdfBlob = pdf.output('blob');
+
+            // Enviar o Blob e o nome via AJAX para o servidor
+            const formData = new FormData();
+            formData.append('pdf', pdfBlob, `${nome}.pdf`);
+            formData.append('nome', nome); // Adiciona o nome ao FormData
+
+            fetch('/upload-pdf', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Inicia o download do PDF
+                    response.blob().then(blob => {
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `${nome}.pdf`;
+                        document.body.appendChild(a);
+                        a.click();
+                        a.remove();
+                        
+                     // Mensagem de sucesso do download
+                alert('Download do PDF iniciado com sucesso!');
+            });
+            return response.text();
+        } else {
+            throw new Error('Erro ao salvar/enviar o PDF.');
                 }
-            }, 'image/jpeg');
-        } catch (error) {
-            console.error('Erro ao compartilhar:', error);
-            alert('Erro ao compartilhar: ' + error.message);
-        } finally {
+            })
+            .then(message => {
+                alert(message); // Exibe a mensagem de sucesso do servidor
+            })
+            .catch(error => {
+                console.error('Erro ao enviar o PDF:', error);
+                alert(error.message);
+            })
+            .finally(() => {
+                // Mostra os botões novamente
+                document.getElementById('botoes-container').style.display = 'block';
+            });
+        });
+
+        document.getElementById('share-pdf').addEventListener('click', async function() {
+            // Oculta os botões
+            document.getElementById('botoes-container').style.display = 'none';
+            
+            const { jsPDF } = window.jspdf;
+            const captureArea = document.querySelector('.container.py-5');
+            const nome = "{{ nome }}" || "resultado";
+
+            const canvas = await html2canvas(captureArea, {
+                backgroundColor: null,
+                scale: 2
+            });
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF();
+            const imgWidth = 190;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+            pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+            const pdfBlob = pdf.output('blob');
+
+            if (navigator.share) {
+                const file = new File([pdfBlob], `${nome}.pdf`, { type: 'application/pdf' });
+
+                try {
+                    await navigator.share({
+                        title: 'Compartilhar PDF',
+                        text: 'Confira este arquivo PDF.',
+                        files: [file]
+                    });
+                } catch (err) {
+                    alert('Erro ao compartilhar: ' + err.message);
+                }
+            } else {
+                alert('O compartilhamento não é compatível com este dispositivo.');
+            }
+
             // Mostra os botões novamente
             document.getElementById('botoes-container').style.display = 'block';
-        }
-    });
-</script>
+        });
+    </script>
 </body>
 </html>
