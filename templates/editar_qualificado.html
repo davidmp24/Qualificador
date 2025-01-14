@@ -6,7 +6,20 @@
     <title>Editar Qualificação</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/qualificacao.css') }}">
-    </head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Esconde os inputs originais */
+        #foto-camera, #foto-galeria {
+            display: none;
+        }
+        .botoes-container {
+            display: flex; /* Ativa o Flexbox */
+            flex-direction: row; /* Alinha os itens em linha (horizontalmente) */
+            gap: 10px; /* Espaço entre os botões (ajuste conforme necessário) */
+            justify-content: center;
+        }
+    </style>
+</head>
 <body class="bg-light">
     <div class="container py-5">
         <div class="card shadow-lg p-4">
@@ -84,8 +97,21 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="foto">Foto:</label>
-                    <input type="file" id="foto" name="foto" class="form-control-file" accept="image/*">
+                    <label for="foto-label">Foto:</label>
+                    <div class="mt-2 botoes-container">
+                        <button type="button" id="abrir-camera" class="btn btn-primary">
+                            <i class="fas fa-camera"></i>
+                        </button>
+                        <button type="button" id="abrir-galeria" class="btn btn-secondary">
+                            <i class="fas fa-images"></i>
+                        </button>
+                        <!-- Input para a câmera -->
+                        <input type="file" id="foto-camera" name="foto" accept="image/*" capture="user">
+                        <!-- Input para a galeria -->
+                        <input type="file" id="foto-galeria" name="foto" accept="image/*">
+                        <!-- Label que mostrará o nome do arquivo selecionado -->
+                        <label id="foto-label" class="custom-file-label" for="foto-camera">Escolher arquivo</label>
+                    </div>
                     {% if request.args.get('foto_url') %}
                     <div class="mt-2">
                         <img src="{{ request.args.get('foto_url') }}" alt="Foto" class="img-thumbnail" width="100">
@@ -102,5 +128,28 @@
             </div>
         </footer>
     </div>
+    <script>
+        document.getElementById('abrir-camera').addEventListener('click', function() {
+            document.getElementById('foto-camera').click();
+        });
+
+        document.getElementById('abrir-galeria').addEventListener('click', function() {
+            document.getElementById('foto-galeria').click();
+        });
+
+        // Atualiza o label com o nome do arquivo selecionado de qualquer um dos inputs
+        document.getElementById('foto-camera').addEventListener('change', function(e) {
+            atualizarNomeArquivo(e);
+        });
+
+        document.getElementById('foto-galeria').addEventListener('change', function(e) {
+            atualizarNomeArquivo(e);
+        });
+
+        function atualizarNomeArquivo(e) {
+            var fileName = e.target.files[0].name;
+            document.getElementById('foto-label').innerText = fileName;
+        }
+    </script>
 </body>
 </html>
