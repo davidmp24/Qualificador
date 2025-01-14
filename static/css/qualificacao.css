@@ -1,0 +1,12 @@
+#abrir-camera, #abrir-galeria {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px; /* Ajuste a largura conforme necessário */
+    height: 45px; /* Ajuste a altura conforme necessário */
+}
+
+#abrir-camera i, #abrir-galeria i {
+    font-size: 24px; /* Ajuste o tamanho do ícone conforme necessário */
+    margin: 0; /* Remove margens */
+}
