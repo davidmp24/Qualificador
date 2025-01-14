@@ -7,12 +7,6 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/qualificacao.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        /* Esconde os inputs originais */
-        #foto-camera, #foto-galeria {
-            display: none;
-        }
-    </style>
 </head>
 <body class="bg-light">
     <div class="container py-5">
@@ -89,8 +83,7 @@
                 </div>
                 <div class="form-group">
                     <label for="foto-label">Foto:</label>
-                    <div class="mt-2">
-                        <button type="button" id="abrir-camera" class="btn btn-primary">
+                    <div class="mt-2 botoes-container"> <button type="button" id="abrir-camera" class="btn btn-primary">
                             <i class="fas fa-camera"></i>
                         </button>
                         <button type="button" id="abrir-galeria" class="btn btn-secondary">
@@ -100,8 +93,6 @@
                         <input type="file" id="foto-camera" name="foto" accept="image/*" capture="user">
                         <!-- Input para a galeria -->
                         <input type="file" id="foto-galeria" name="foto" accept="image/*">
-                        <!-- Label que mostrará o nome do arquivo selecionado -->
-                        <label id="foto-label" class="custom-file-label" for="foto-camera">Escolher arquivo</label>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary btn-block">Cadastrar</button>

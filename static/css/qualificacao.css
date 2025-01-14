@@ -10,3 +10,10 @@
     font-size: 24px; /* Ajuste o tamanho do ícone conforme necessário */
     margin: 0; /* Remove margens */
 }
+
+.botoes-container {
+    display: flex; /* Ativa o Flexbox */
+    flex-direction: row; /* Alinha os itens em linha (horizontalmente) */
+    gap: 10px; /* Espaço entre os botões (ajuste conforme necessário) */
+    justify-content: center;
+}
