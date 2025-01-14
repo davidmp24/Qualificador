@@ -3,7 +3,10 @@ from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 import os
 
-SERVICE_ACCOUNT_FILE = 'credentials/credentials.json'  # Ajuste o caminho se necessário
+SERVICE_ACCOUNT_FILE = 'credentials.json'
+if not os.path.exists(SERVICE_ACCOUNT_FILE):
+  with open(SERVICE_ACCOUNT_FILE, 'w') as f:
+    f.write(os.environ.get('GOOGLE_APPLICATION_CREDENTIALS'))
 SCOPES = ['https://www.googleapis.com/auth/drive']
 PARENT_FOLDER_ID = '1900p8OQqh_imzW8YDxA_gwHy5q81urZz'
 

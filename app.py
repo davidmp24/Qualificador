@@ -18,7 +18,10 @@ from drive_utils import list_files_from_drive, upload_to_drive
 app = Flask(__name__)
 
 # Configurações para o Google Drive
-SERVICE_ACCOUNT_FILE = 'credentials/credentials.json'  # <----- VERIFIQUE SE O CAMINHO E O NOME ESTÃO CORRETOS
+SERVICE_ACCOUNT_FILE = 'credentials.json'
+if not os.path.exists(SERVICE_ACCOUNT_FILE):
+  with open(SERVICE_ACCOUNT_FILE, 'w') as f:
+    f.write(os.environ.get('GOOGLE_APPLICATION_CREDENTIALS'))
 SCOPES = ['https://www.googleapis.com/auth/drive']
 PARENT_FOLDER_ID = '1900p8OQqh_imzW8YDxA_gwHy5q81urZz'  # <----- COLOQUE O ID DA SUA PASTA AQUI
 
