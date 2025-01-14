@@ -7,6 +7,18 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/qualificacao.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Esconde os inputs originais */
+        #foto-camera, #foto-galeria {
+            display: none;
+        }
+        .botoes-container {
+            display: flex; /* Ativa o Flexbox */
+            flex-direction: row; /* Alinha os itens em linha (horizontalmente) */
+            gap: 10px; /* Espaço entre os botões (ajuste conforme necessário) */
+            justify-content: center;
+        }
+    </style>
 </head>
 <body class="bg-light">
     <div class="container py-5">
