@@ -48,17 +48,29 @@
 
             const { jsPDF } = window.jspdf;
             const captureArea = document.getElementById('capture-area');
-            const nome = document.querySelector('.nome').innerText; // Captura o nome do elemento HTML
-
+            const nome = document.querySelector('.nome').innerText;
+       
+            // --- Ajuste de altura ---
+            const originalHeight = captureArea.style.height; // Salva a altura original
+            captureArea.style.height = 'auto'; // Define a altura para 'auto' para capturar todo o conteúdo
+       
             const canvas = await html2canvas(captureArea, {
                 backgroundColor: null,
-                scale: 2
+                scale: 2,
+                useCORS: true // Adicione esta linha
             });
             const imgData = canvas.toDataURL('image/png');
+            // --- Fim do ajuste ---
+       
+            // Restaurar a altura original após um pequeno atraso
+            setTimeout(() => {
+                captureArea.style.height = originalHeight;
+            }, 10);
+       
             const pdf = new jsPDF();
             const imgWidth = 190;
             const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
+       
             pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
 
             // Obter o PDF como Blob
