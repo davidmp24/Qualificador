@@ -6,6 +6,7 @@
     <title>Qualificação</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/qualificacao.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body class="bg-light">
     <div class="container py-5">
@@ -82,7 +83,18 @@
                 </div>
                 <div class="form-group">
                     <label for="foto">Foto:</label>
-                    <input type="file" id="foto" name="foto" class="form-control-file" accept="image/*">
+                    <div class="custom-file">
+                        <input type="file" id="foto" name="foto" class="custom-file-input" accept="image/*">
+                        <label class="custom-file-label" for="foto">Escolher arquivo</label>
+                    </div>
+                    <div class="mt-2">
+                        <button type="button" id="abrir-camera" class="btn btn-primary">
+                            <i class="fas fa-camera"></i>  <!-- Ícone da câmera -->
+                        </button>
+                        <button type="button" id="abrir-galeria" class="btn btn-secondary">
+                            <i class="fas fa-images"></i> <!-- Ícone da galeria -->
+                        </button>
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary btn-block">Cadastrar</button>
                 <a href="/" class="btn btn-secondary btn-block">Cancelar</a>
@@ -94,5 +106,21 @@
             </div>
         </footer>
     </div>
+    <script>
+        document.getElementById('abrir-camera').addEventListener('click', function() {
+            document.getElementById('foto').click();
+        });
+
+        document.getElementById('abrir-galeria').addEventListener('click', function() {
+            document.getElementById('foto').click();
+        });
+
+        // Atualiza o nome do arquivo selecionado no label do input file
+        document.getElementById('foto').addEventListener('change', function(e) {
+            var fileName = e.target.files[0].name;
+            var nextSibling = e.target.nextElementSibling;
+            nextSibling.innerText = fileName;
+        });
+    </script>
 </body>
 </html>
