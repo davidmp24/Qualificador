@@ -111,11 +111,16 @@
                         <input type="file" id="foto-galeria" name="foto" accept="image/*">
                         <!-- Label que mostrará o nome do arquivo selecionado -->
                     </div>
-                    {% if request.args.get('foto_url') %}
-                    <div class="mt-2">
-                        <img src="{{ request.args.get('foto_url') }}" alt="Foto" class="img-thumbnail" width="100">
+                    <div id="foto-container" style="position: relative; display: inline-block;">
+                        {% if request.args.get('foto_url') %}
+                        <img src="{{ request.args.get('foto_url') }}" alt="Foto" class="img-thumbnail" width="100" id="foto-preview">
+                        <button type="button" id="remover-foto" class="btn btn-danger btn-sm" style="position: absolute; top: 5px; right: 5px; display: block;">X</button>
+                        {% else %}
+                        <img src="" alt="Foto" class="img-thumbnail" width="100" id="foto-preview" style="display: none;">
+                        <button type="button" id="remover-foto" class="btn btn-danger btn-sm" style="position: absolute; top: 5px; right: 5px; display: none;">X</button>
+                        {% endif %}
                     </div>
-                    {% endif %}
+                    <input type="hidden" name="foto_removida" id="foto_removida" value="false">
                 </div>
                 <button type="submit" class="btn btn-primary btn-block">Atualizar</button>
                 <a href="/" class="btn btn-secondary btn-block">Cancelar</a>
@@ -128,27 +133,51 @@
         </footer>
     </div>
     <script>
-        document.getElementById('abrir-camera').addEventListener('click', function() {
-            document.getElementById('foto-camera').click();
-        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const fotoCameraInput = document.getElementById('foto-camera');
+            const fotoGaleriaInput = document.getElementById('foto-galeria');
+            const fotoPreview = document.getElementById('foto-preview');
+            const removerFotoBtn = document.getElementById('remover-foto');
+            const fotoRemovidaInput = document.getElementById('foto_removida');
 
-        document.getElementById('abrir-galeria').addEventListener('click', function() {
-            document.getElementById('foto-galeria').click();
-        });
+            document.getElementById('abrir-camera').addEventListener('click', function() {
+                fotoCameraInput.click();
+            });
 
-        // Atualiza o label com o nome do arquivo selecionado de qualquer um dos inputs
-        document.getElementById('foto-camera').addEventListener('change', function(e) {
-            atualizarNomeArquivo(e);
-        });
+            document.getElementById('abrir-galeria').addEventListener('click', function() {
+                fotoGaleriaInput.click();
+            });
 
-        document.getElementById('foto-galeria').addEventListener('change', function(e) {
-            atualizarNomeArquivo(e);
-        });
+            fotoCameraInput.addEventListener('change', function(event) {
+                atualizarFotoPreview(event);
+            });
 
-        function atualizarNomeArquivo(e) {
-            var fileName = e.target.files[0].name;
-            document.getElementById('foto-label').innerText = fileName;
-        }
+            fotoGaleriaInput.addEventListener('change', function(event) {
+                atualizarFotoPreview(event);
+            });
+
+            removerFotoBtn.addEventListener('click', function() {
+                fotoPreview.src = '';
+                fotoPreview.style.display = 'none';
+                removerFotoBtn.style.display = 'none';
+                fotoCameraInput.value = ''; // Limpa o valor do input file da câmera
+                fotoGaleriaInput.value = ''; // Limpa o valor do input file da galeria
+                fotoRemovidaInput.value = 'true';
+            });
+
+            function atualizarFotoPreview(event) {
+                if (event.target.files && event.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        fotoPreview.src = e.target.result;
+                        fotoPreview.style.display = 'block';
+                        removerFotoBtn.style.display = 'block';
+                        fotoRemovidaInput.value = 'false';
+                    }
+                    reader.readAsDataURL(event.target.files[0]);
+                }
+            }
+        });
     </script>
 </body>
 </html>

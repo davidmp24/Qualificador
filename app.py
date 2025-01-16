@@ -140,9 +140,12 @@ def editar_qualificado():
         }
 
         foto = request.files.get('foto')
+        foto_removida = request.form.get('foto_removida')
         foto_url = request.form.get('foto_url')
 
-        if foto and foto.filename != '':
+        if foto_removida == 'true':
+          foto_url = None
+        elif foto and foto.filename != '':
             filename = os.path.basename(foto.filename)
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             foto.save(file_path)

@@ -33,7 +33,7 @@
         <button id="save-pdf" class="btn btn-primary">Salvar como PDF</button>
         <button id="share-pdf" class="btn btn-primary">Compartilhar</button>
         <!-- Botão de Edição -->
-        <a href="/editar_qualificado?batalhao=nome={{ nome }}&vulgo={{ vulgo }}&rgcpf={{ rgcpf }}&ssp={{ ssp }}&nascimento={{ nascimento }}&natureza={{ natureza }}&datafato={{ datafato }}&bopme={{ bopme }}&cidade={{ cidade }}&endereco={{ endereco }}&foto_url={{ foto_url }}" class="btn btn-primary">Editar</a>
+        <a href="/editar_qualificado?batalhao=&nome={{ nome }}&vulgo={{ vulgo }}&rgcpf={{ rgcpf }}&ssp={{ ssp }}&nascimento={{ nascimento }}&natureza={{ natureza }}&datafato={{ datafato }}&bopme={{ bopme }}&cidade={{ cidade }}&endereco={{ endereco }}&foto_url={{ foto_url }}" class="btn btn-primary">Editar</a>
         <a href="/" class="btn btn-primary">Início</a>  <!-- Botão Início -->
     </div>
     <footer class="footer mt-auto py-3 bg-light">
@@ -41,122 +41,121 @@
             <span class="text-muted">Copyright © <a href="https://x.com/DavidMPrado">2025</a></span>
         </div>
     </footer>
-        <script>
-        document.getElementById('save-pdf').addEventListener('click', async function() {
-            // Oculta os botões
-            document.getElementById('botoes-container').style.display = 'none';
+    <script>
+    document.getElementById('save-pdf').addEventListener('click', async function() {
+        // Oculta os botões
+        document.getElementById('botoes-container').style.display = 'none';
 
-            const { jsPDF } = window.jspdf;
-            const captureArea = document.getElementById('capture-area');
-            const nome = document.querySelector('.nome').innerText;
-       
-            // --- Ajuste de altura ---
-            const originalHeight = captureArea.style.height; // Salva a altura original
-            captureArea.style.height = 'auto'; // Define a altura para 'auto' para capturar todo o conteúdo
-       
-            const canvas = await html2canvas(captureArea, {
-                backgroundColor: null,
-                scale: 2,
-                useCORS: true // Adicione esta linha
-            });
-            const imgData = canvas.toDataURL('image/png');
-            // --- Fim do ajuste ---
-       
-            // Restaurar a altura original após um pequeno atraso
-            setTimeout(() => {
-                captureArea.style.height = originalHeight;
-            }, 10);
-       
-            const pdf = new jsPDF();
-            const imgWidth = 190;
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
-       
-            pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+        const { jsPDF } = window.jspdf;
+        const captureArea = document.getElementById('capture-area');
+        const nome = document.querySelector('.nome').innerText;
 
-            // Obter o PDF como Blob
-            const pdfBlob = pdf.output('blob');
-
-            // Enviar o Blob e o nome via AJAX para o servidor
-            const formData = new FormData();
-            formData.append('pdf', pdfBlob, `${nome}.pdf`);
-            formData.append('nome', nome); // Adiciona o nome ao FormData
-
-            fetch('/upload-pdf', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (response.ok) {
-                    // Inicia o download do PDF
-                    response.blob().then(blob => {
-                        const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = `${nome}.pdf`;
-                        document.body.appendChild(a);
-                        a.click();
-                        a.remove();
-                        
-                     // Mensagem de sucesso do download
-                alert('Download do PDF iniciado com sucesso!');
-            });
-            return response.text();
-        } else {
-            throw new Error('Erro ao salvar/enviar o PDF.');
-                }
-            })
-            .then(message => {
-                alert(message); // Exibe a mensagem de sucesso do servidor
-            })
-            .catch(error => {
-                console.error('Erro ao enviar o PDF:', error);
-                alert(error.message);
-            })
-            .finally(() => {
-                // Mostra os botões novamente
-                document.getElementById('botoes-container').style.display = 'block';
-            });
+        // Captura a largura e altura totais da janela usando windowWidth e windowHeight
+        const canvas = await html2canvas(captureArea, {
+            backgroundColor: null,
+            scale: 2,
+            useCORS: true, // Adicionado para lidar com imagens de origens cruzadas
+            windowWidth: document.documentElement.scrollWidth,
+            windowHeight: document.documentElement.scrollHeight
         });
 
-        document.getElementById('share-pdf').addEventListener('click', async function() {
-            // Oculta os botões
-            document.getElementById('botoes-container').style.display = 'none';
-            
-            const { jsPDF } = window.jspdf;
-            const captureArea = document.querySelector('.container.py-5');
-            const nome = "{{ nome }}" || "resultado";
+        const imgData = canvas.toDataURL('image/png');
 
-            const canvas = await html2canvas(captureArea, {
-                backgroundColor: null,
-                scale: 2
-            });
-            const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF();
-            const imgWidth = 190;
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        const pdf = new jsPDF();
+        const imgWidth = 190; // Largura do PDF em mm (ajuste se necessário)
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-            pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
-            const pdfBlob = pdf.output('blob');
+        pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
 
-            if (navigator.share) {
-                const file = new File([pdfBlob], `${nome}.pdf`, { type: 'application/pdf' });
+        // Obter o PDF como Blob
+        const pdfBlob = pdf.output('blob');
 
-                try {
-                    await navigator.share({
-                        title: 'Compartilhar PDF',
-                        text: 'Confira este arquivo PDF.',
-                        files: [file]
-                    });
-                } catch (err) {
-                    alert('Erro ao compartilhar: ' + err.message);
-                }
+        // Enviar o Blob e o nome via AJAX para o servidor
+        const formData = new FormData();
+        formData.append('pdf', pdfBlob, `${nome}.pdf`);
+        formData.append('nome', nome);
+
+        fetch('/upload-pdf', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (response.ok) {
+                // Inicia o download do PDF
+                response.blob().then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${nome}.pdf`;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+
+                    // Mensagem de sucesso do download
+                    alert('Download do PDF iniciado com sucesso!');
+                });
+                return response.text();
             } else {
-                alert('O compartilhamento não é compatível com este dispositivo.');
+                throw new Error('Erro ao salvar/enviar o PDF.');
             }
-
+        })
+        .then(message => {
+            alert(message); // Exibe a mensagem de sucesso do servidor
+        })
+        .catch(error => {
+            console.error('Erro ao enviar o PDF:', error);
+            alert(error.message);
+        })
+        .finally(() => {
             // Mostra os botões novamente
             document.getElementById('botoes-container').style.display = 'block';
         });
+    });
+
+    document.getElementById('share-pdf').addEventListener('click', async function() {
+        // Oculta os botões
+        document.getElementById('botoes-container').style.display = 'none';
+
+        const { jsPDF } = window.jspdf;
+        const captureArea = document.getElementById('capture-area'); // Alterado para o elemento correto
+        const nome = "{{ nome }}" || "resultado";
+
+        // Captura a largura e altura totais da janela usando windowWidth e windowHeight
+        const canvas = await html2canvas(captureArea, {
+            backgroundColor: null,
+            scale: 2,
+            useCORS: true, // Adicionado para lidar com imagens de origens cruzadas
+            windowWidth: document.documentElement.scrollWidth,
+            windowHeight: document.documentElement.scrollHeight
+        });
+
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF();
+        const imgWidth = 190;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+        const pdfBlob = pdf.output('blob');
+
+        if (navigator.share) {
+            const file = new File([pdfBlob], `${nome}.pdf`, { type: 'application/pdf' });
+
+            try {
+                await navigator.share({
+                    title: 'Compartilhar PDF',
+                    text: 'Confira este arquivo PDF.',
+                    files: [file]
+                });
+            } catch (err) {
+                alert('Erro ao compartilhar: ' + err.message);
+            }
+        } else {
+            alert('O compartilhamento não é compatível com este dispositivo.');
+        }
+
+        // Mostra os botões novamente
+        document.getElementById('botoes-container').style.display = 'block';
+    });
     </script>
 </body>
 </html>
